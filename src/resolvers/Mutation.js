@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import getUserId from '../utils/getUserId';
 import hashPassword from '../utils/hashPassword';
 import generateToken from '../utils/generateToken';
