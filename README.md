@@ -36,7 +36,7 @@ DB_PASSWORD=mypassword
 
 `$ docker-compose --env-file ./config/dev.env up`
 
-## To deploy datamode using prisma
+## To deploy datamodel using prisma
 
 `$ npm run prisma-deploy`
 or
