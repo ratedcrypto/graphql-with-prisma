@@ -38,8 +38,14 @@ DB_PASSWORD=mypassword
 
 ## To deploy datamode using prisma
 
+`$ npm run prisma-deploy`
+or
 `$ prisma deploy -e ../config/dev.env`
 
 ## To fetch latest schema
 
 `$ npm run get-schema`
+
+## To run unit tests
+
+`$ npm run test`
