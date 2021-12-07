@@ -1,8 +1,7 @@
 import '@babel/polyfill/noConflict';
-import 'cross-fetch/polyfill';
 import { gql } from 'apollo-boost';
 import prisma from '../src/prisma';
-import seedDatabase from './utils/seedDatabase';
+import seedDatabase, { userOne } from './utils/seedDatabase';
 import getClient from '../src/utils/getClient';
 
 const client = getClient();
@@ -104,4 +103,25 @@ test('Should not login with bad credentials', async () => {
             mutation: login
         })
     ).rejects.toThrow();
+});
+
+test('Should fetch user profile', async () => {
+    const client = getClient(userOne.jwt);
+
+    const getProfile = gql`
+        query {
+            me {
+                id
+                name
+                email
+            }
+        }
+    `;
+    const response = await client.query({
+        query: getProfile
+    });
+
+    expect(response.data.me.id).toBe(userOne.user.id);
+    expect(response.data.me.name).toBe(userOne.user.name);
+    expect(response.data.me.email).toBe(userOne.user.email);
 });
