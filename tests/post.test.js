@@ -1,24 +1,15 @@
 import '@babel/polyfill/noConflict';
 import { gql } from 'apollo-boost';
 import prisma from '../src/prisma';
-import seedDatabase, { userOne } from './utils/seedDatabase';
-import getClient from '../src/utils/getClient';
+import seedDatabase, { userOne, postOne } from './utils/seedDatabase';
+import getClient from './utils/getClient';
+import { getPosts, myPosts, updatePost } from './utils/operations';
 
 const client = getClient();
 
 beforeEach(seedDatabase);
 
 test('Should expose published posts', async () => {
-    const getPosts = gql`
-        query {
-            posts {
-                id
-                title
-                body
-                published
-            }
-        }
-    `;
     const response = await client.query({
         query: getPosts
     });
@@ -29,20 +20,30 @@ test('Should expose published posts', async () => {
 
 test('Should get my posts', async () => {
     const client = getClient(userOne.jwt);
-
-    const myPosts = gql`
-        query {
-            myPosts {
-                id
-                title
-                body
-                published
-            }
-        }
-    `;
     const response = await client.query({
         query: myPosts
     });
 
     expect(response.data.myPosts.length).toBe(2);
+});
+
+test('Should be able to update my post', async () => {
+    const client = getClient(userOne.jwt);
+    const variables = {
+        id: postOne.post.id,
+        data: {
+            published: false
+        }
+    };
+    const response = await client.mutate({
+        mutation: updatePost,
+        variables
+    });
+    const exists = await prisma.exists.Post({
+        id: postOne.post.id,
+        published: false
+    });
+
+    expect(exists).toBe(true);
+    expect(response.data.updatePost.published).toBe(false);
 });

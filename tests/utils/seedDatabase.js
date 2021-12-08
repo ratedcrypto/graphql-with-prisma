@@ -12,6 +12,15 @@ const userOne = {
     jwt: undefined
 };
 
+const postOne = {
+    input: {
+        title: 'My first post',
+        body: 'Body of my first post',
+        published: true
+    },
+    post: undefined
+};
+
 const seedDatabase = async () => {
     await prisma.mutation.deleteManyComments();
     await prisma.mutation.deleteManyPosts();
@@ -29,11 +38,9 @@ const seedDatabase = async () => {
         }
     );
 
-    await prisma.mutation.createPost({
+    postOne.post = await prisma.mutation.createPost({
         data: {
-            title: 'My first post',
-            body: 'Body of my first post',
-            published: true,
+            ...postOne.input,
             author: {
                 connect: {
                     id: userOne.user.id
@@ -56,4 +63,4 @@ const seedDatabase = async () => {
     });
 };
 
-export { seedDatabase as default, userOne };
+export { seedDatabase as default, userOne, postOne };
